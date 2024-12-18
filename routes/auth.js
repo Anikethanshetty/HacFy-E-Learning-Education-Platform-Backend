@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');  // Adjust path if necessary
 const {zodLoginverify} = require("../middlewares/userDetailszod");
 const {userjwtverify} = require("../middlewares/userJWt")
-import { rateLimit } from 'express-rate-limit'
+const rateLimit = require('express-rate-limit');
 const router = express.Router();
 
 const otplimiter = rateLimit({
