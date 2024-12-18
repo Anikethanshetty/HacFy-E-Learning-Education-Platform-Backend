@@ -1,32 +1,50 @@
-const bcrypt = require("bcryptjs");
+   
+const bcrypt = require('bcrypt');
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const dotEnv = require("dotenv");
 
+// Loading the env variables from .env file
+dotEnv.config();
 
-const signIn = async (req,res) => {
-    const { email,password } = req.body;
-    if (!email ||  !password) {
-        return res.status(400).json({ message: 'Please fill all fields' });
-    }
+const JWT_SECRET = process.env.JWT_SECRET; 
+
+const signIn =async (req, res) => {
+   
+
+    const { email, password } = req.body;
+
     try {
-      const existingUser = await User.findOne({ email });
-      const foundName = existingUser.fullName;
-      const foundEmail = existingUser.email;
-        if (!existingUser) {
-          return res.status(400).json({ message: 'User with this email not exists' ,login:false});
+     
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ error: "Invalid email or password. Please try again." });
         }
 
-        const isPasswordMatching = await bcrypt.compare(password,existingUser.password)
+       
+        const isPasswordMatching = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatching) {
+            return res.status(401).json({ error: "Invalid email or password. Please try again." });
+        }
+
+      
+        const token = jwt.sign(
+            { id: user._id, email: user.email }, 
+            JWT_SECRET,
+        );
+
         
-        if(!isPasswordMatching) {
-            return res.status(401).json({message:"incorrect password",login:false});
-        }
-
-        return res.status(200).json({message:"login successfull",foundName,foundEmail,login:true});
-
-    }catch(err) {
-        console.log(err)
-        return res.status(500).json({message:"server errorr",login:false});
+        return res.status(200).json({ 
+            token, 
+            name: user.fullName ,
+            message: "Login successful"
+        });
+    } catch (error) {
+        console.error("Error during signin:", error);
+        res.status(500).json({ 
+            error: "An internal server error occurred. Please try again later." 
+        });
     }
-}
+};
 
-module.exports=signIn;
+module.exports = signIn;

@@ -18,6 +18,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  verified:{
+    type:Boolean,
+    required:true,
+  },
+
+  verificationToken:{
+    type:String,
+    required:false
+  },
 });
 
 const User = mongoose.model('User', userSchema);
