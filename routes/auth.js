@@ -1,9 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');  // Adjust path if necessary
-const {zodLoginverify} = require("../middlewares/userDetailszod");
-const {userjwtverify} = require("../middlewares/userJWt")
-import { rateLimit } from 'express-rate-limit'
+const {zodLoginverify} = require("../middlewares/userDetailsZod");
+const {userjwtverify} = require("../middlewares/jwtVerify")
+const rateLimit = require('express-rate-limit');
 const router = express.Router();
 
 const otplimiter = rateLimit({
@@ -22,12 +22,13 @@ const passwordLimiter = rateLimit({
     message: 'Too man requests from this IP, please try again after 15 minutes.',
 });
 
-router.post('/register', zodLoginverify, require("../controllers/register"));
+router.post('/register', zodLoginverify, require("../controllers/signup"));
 router.get("/verifyEmail",otplimiter,require("../controllers/verifyEmail")); 
 router.post('/signin',passwordLimiter, require("../controllers/signin") );
 router.get("/forgotPassword",require("../controllers/forgotPassword"))
 router.post("/resetPasswordOtp",require("../controllers/resetPasswordOtp"))
 
 
+  
 // Export the router
 module.exports = router;
