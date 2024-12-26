@@ -2,7 +2,7 @@ const User = require("../models/User");
 
 const verifyEmail = async (req, res) => {
   const { otp, email } = req.body;
-
+    
   try {
     
     const user = await User.findOne({ email });
@@ -14,17 +14,16 @@ const verifyEmail = async (req, res) => {
         valid: false,
       });
     }
-
-    // Check if the OTP matches
+    
     if (user.verificationToken === otp) {
       try {
         await User.updateOne(
           { email }, // filter conditon
           { $set: { verificationToken: null }}, 
-          {$set:{verified:false}}
+          {$set:{verified:true}}
         );
 
-        return res.status(200).json({
+        return res.status(201).json({
           message: "OTP is verified",
           valid: true,
         });

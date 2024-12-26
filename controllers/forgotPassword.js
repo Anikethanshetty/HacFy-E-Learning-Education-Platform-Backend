@@ -12,6 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const resetPassword = async (req, res) => {
+  console.log(req.body)
     const { email } = req.body;
     
     try {
