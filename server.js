@@ -3,15 +3,14 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const dotEnv = require("dotenv");
-
 const app = express();
-
-//loading the env variables from .env file
 dotEnv.config();
+
+const agenda = require('./agenda'); 
+require('./jobs/job')(agenda)
 
 app.use(express.json());
 
-// CORS configuration
 app.use(
   cors({
     origin:["http://localhost:5173","https://hacfy.com"], // Frontend URL
@@ -20,10 +19,11 @@ app.use(
   }),
 );
 
-// Use the auth routes for any /api/auth path
 app.use("/api/auth", authRoutes);
+agenda.start(); 
+console.log('Agenda started!');
 
-// MongoDB connection
+
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))

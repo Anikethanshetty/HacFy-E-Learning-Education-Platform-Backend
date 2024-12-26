@@ -23,10 +23,10 @@ const passwordLimiter = rateLimit({
 });
 
 router.post('/register', zodLoginverify, require("../controllers/signup"));
-router.get("/verifyEmail",otplimiter,require("../controllers/verifyEmail")); 
+router.post("/verifyEmail",otplimiter,require("../controllers/verifyEmail")); 
 router.post('/signin',passwordLimiter, require("../controllers/signin") );
-router.get("/forgotPassword",require("../controllers/forgotPassword"))
-router.post("/resetPasswordOtp",require("../controllers/resetPasswordOtp"))
+router.post("/forgotPassword",require("../controllers/forgotPassword"))
+router.post("/resetPasswordOtp",otplimiter,require("../controllers/resetPasswordOtp"))
 
 
   
